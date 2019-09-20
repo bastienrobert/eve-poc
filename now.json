@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "env": {
+    "SPREADSHEET_ID": "@spreadsheet_id",
+    "SLACK_OAUTH_TOKEN": "@slack_oauth_token",
+    "GOOGLE_APPLICATION_CREDENTIALS": "@google_application_credentials"
+  }
+}

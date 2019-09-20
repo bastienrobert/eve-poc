@@ -1,26 +1,28 @@
 const { google } = require('googleapis')
 const dlv = require('dlv')
 
-const spreadsheetId = process.env.SPREADSHEET_ID
-
 const { formatLinksArray, getRealSheetIndex } = require('../../utils/helpers')
 
 const SUCCESS = { success: true }
 const ISSUE = { success: false }
 
 async function authenticate() {
-  return await google.auth.getClient({
+  const options = {
     scopes: [
       'https://www.googleapis.com/auth/drive',
       'https://www.googleapis.com/auth/drive.file',
       'https://www.googleapis.com/auth/spreadsheets'
     ]
-  })
+  }
+  if (process.env.NODE_ENV !== 'development') {
+    options.credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS)
+  }
+  return await google.auth.getClient(options)
 }
 
 async function getRangeFromID(sheets, sheet, id) {
   const getID = await sheets.spreadsheets.values.get({
-    spreadsheetId,
+    spreadsheetId: process.env.SPREADSHEET_ID,
     range: `${sheet}!A2:A`,
     majorDimension: 'COLUMNS'
   })
@@ -35,7 +37,7 @@ async function push(sheets, { id, sheet, text, links, author, date }) {
 
   try {
     await sheets.spreadsheets.values.append({
-      spreadsheetId,
+      spreadsheetId: process.env.SPREADSHEET_ID,
       range: `${sheet}!A1:E1`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
@@ -60,7 +62,7 @@ async function update(sheets, { id, sheet, text, links, author, date }) {
 
   try {
     await sheets.spreadsheets.values.update({
-      spreadsheetId,
+      spreadsheetId: process.env.SPREADSHEET_ID,
       range: `${sheet}!B${realIndex}:E${realIndex}`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
@@ -85,7 +87,7 @@ async function clear(sheets, { id, sheet }) {
 
   try {
     await sheets.spreadsheets.values.clear({
-      spreadsheetId,
+      spreadsheetId: process.env.SPREADSHEET_ID,
       range: `${sheet}!A${realIndex}:${realIndex}`
     })
 

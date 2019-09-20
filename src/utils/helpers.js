@@ -7,7 +7,7 @@ const URL_REGEX_WITH_CHEVRON = new RegExp(
 
 module.exports = {
   getLinksFromString: function(string) {
-    return string.match(URL_REGEX_WITH_CHEVRON).slice(1, -1) || []
+    return (string.match(URL_REGEX_WITH_CHEVRON) || []).map(l => l.slice(1, -1))
   },
   formatLinksArray: function(links) {
     return links.join(' ')
